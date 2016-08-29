@@ -21,44 +21,7 @@ public class IOSConfig {
         p12pwd = "";
     }
 
-    public IOSConfig(Properties prop) {
-        this.svnpath = prop.getProperty("svnpath");
-        this.username= prop.getProperty("username");
-        this.pwd = prop.getProperty("pwd");
-        this.scheme = prop.getProperty("scheme");
-        this.target = prop.getProperty("target");
-        this.configuration = prop.getProperty("configuration");
-        this.p12pwd = prop.getProperty("p12pwd");
-        this.cerFriendlyName = prop.getProperty("cerFriendlyName");
-    }
-
-
-
-    public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("svnpath", svnpath);
-        map.put("username", username);
-        map.put("pwd", pwd);
-        map.put("scheme", scheme);
-        map.put("target", target);
-        map.put("configuration", configuration);
-        map.put("cerFriendlyName", cerFriendlyName);
-        map.put("p12pwd", p12pwd);
-        return map;
-    }
-
-    public Properties toProperties() {
-        Properties prop = new Properties();
-        prop.setProperty("svnpath", svnpath);
-        prop.setProperty("username", username);
-        prop.setProperty("pwd", pwd);
-        prop.setProperty("scheme", scheme);
-        prop.setProperty("target", target);
-        prop.setProperty("configuration", configuration);
-        prop.setProperty("cerFriendlyName", cerFriendlyName);
-        prop.setProperty("p12pwd", p12pwd);
-        return prop;
-    }
+    private String projectName;
 
     private String svnpath;
     private String username;
@@ -68,6 +31,7 @@ public class IOSConfig {
     private String configuration;
     private String cerFriendlyName;
     private String p12pwd;
+    private String bundleId;
 
     public String getP12pwd() {
         return p12pwd;
@@ -84,8 +48,6 @@ public class IOSConfig {
     public void setCerFriendlyName(String cerFriendlyName) {
         this.cerFriendlyName = cerFriendlyName;
     }
-
-
 
     public String getSvnpath() {
         return svnpath;
@@ -135,15 +97,19 @@ public class IOSConfig {
         this.configuration = configuration;
     }
 
-    @Override
-    public String toString() {
-        return "IOSConfig{" +
-                "svnpath='" + svnpath + '\'' +
-                ", username='" + username + '\'' +
-                ", pwd='" + pwd + '\'' +
-                ", scheme='" + scheme + '\'' +
-                ", target='" + target + '\'' +
-                ", configuration='" + configuration + '\'' +
-                '}';
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
     }
 }

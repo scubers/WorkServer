@@ -46,6 +46,9 @@
                 },
                 success: function(data, data2) {
                     alert(data)
+                    $("[name=projectName]").each(function () {
+                        $(this).val($("#projectName").val())
+                    })
                 }
             })
         })
@@ -61,6 +64,7 @@
         $("#packageBtn").bind("click", function () {
             $.ajax({
                 type: "POST",
+                data: {projectName: $("#projectName").val()},
                 url: "${pageContext.request.contextPath}/ios/package.do",
                 error: function (err) {
                     console.log(err)
@@ -91,6 +95,11 @@
 
     <div class="page-header">
         <form class="form-signin" id="configForm">
+
+            <h2 class="form-signin-heading">ProjectName</h2>
+            <label for="inputEmail" class="sr-only">ProjectName</label>
+            <input type="text" name="projectName" id="projectName" class="form-control" placeholder="一个打包工程的标识" value="${config.projectName}">
+
             <h2 class="form-signin-heading">SVN Path</h2>
             <label for="inputEmail" class="sr-only">SVN path full path</label>
             <input type="text" name="svnpath" id="inputEmail" class="form-control" placeholder="SVN path full path" value="${config.svnpath}">
@@ -114,6 +123,12 @@
             <h2 class="form-signin-heading">Configuration</h2>
             <label for="Configuration" class="sr-only">Configuration</label>
             <input type="text" id="Configuration" name="configuration" class="form-control" placeholder="Configuration" value="${config.configuration}">
+
+            <h2 class="form-signin-heading">P12密码</h2>
+            <label for="Configuration" class="sr-only">p12pwd</label>
+            <input type="text" id="p12pwd" name="confp12pwdiguration" class="form-control" placeholder="Configuration" value="${config.p12pwd}">
+
+
         </form>
     </div>
 
@@ -130,7 +145,7 @@
     <p>
         <form id="uploadCerForm" action="${pageContext.request.contextPath}/ios/uploadCer.do" method="post" enctype="multipart/form-data">
             <input type="file" name="file" id="certificateFile"/>
-            <input type="hidden" name="type" value="1"/>
+            <input type="hidden" name="projectName" value="${config.projectName}"/>
         </form>
     </p>
     <p>
@@ -142,9 +157,9 @@
 
     </div>
     <p>
-        <form id="uploadProForm" action="${pageContext.request.contextPath}/ios/uploadCer.do" method="post" enctype="multipart/form-data">
+        <form id="uploadProForm" action="${pageContext.request.contextPath}/ios/uploadProvision.do" method="post" enctype="multipart/form-data">
             <input type="file" name="file" id="provisioning"/>
-            <input type="hidden" name="type" value="2"/>
+            <input type="hidden" name="projectName" value="${config.projectName}"/>
         </form>
 
     </p>
