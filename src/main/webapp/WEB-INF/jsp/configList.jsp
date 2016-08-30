@@ -82,7 +82,7 @@
                     ${name}
             </a>
 
-            <a class="btn btn-lg btn-primary" onclick="deleteConfig(${name})" role="button">
+            <a class="btn btn-sm btn-warning" onclick="deleteConfig(${name})" role="button">
                     删除配置
             </a>
         </p>

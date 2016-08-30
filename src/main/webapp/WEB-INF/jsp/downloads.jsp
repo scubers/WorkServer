@@ -51,6 +51,10 @@
         window.setInterval("autorefresh()", 5000);
     });
 
+    function deletePackage(name) {
+        window.location.href = "${pageContext.request.contextPath}/ios/deletePackage.do?packageName=" + name;
+    }
+
 </script>
 
 <body role="document">
@@ -81,6 +85,10 @@
             <p>
                 <a class="btn btn-lg btn-primary" href="itms-services://?action=download-manifest&url=${downloadBaseUrl}/${name}" role="button">
                         ${fn:substring(name, 0, fn:indexOf(name, "."))}
+                </a>
+
+                <a class="btn btn-sm btn-warning" onclick="deletePackage('${fn:substring(name, 0, fn:indexOf(name, "."))}')" role="button">
+                    删除包
                 </a>
             </p>
         </c:if>

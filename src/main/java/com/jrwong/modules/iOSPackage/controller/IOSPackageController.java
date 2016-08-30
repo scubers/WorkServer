@@ -95,6 +95,19 @@ public class IOSPackageController extends BaseController {
         return "redirect:configList.do";
     }
 
+    @RequestMapping("deletePackage")
+    public String deletePackage(String packageName) {
+        String plistpath = request.getServletContext().getRealPath("/builds/plists/") + packageName + ".plist";
+        String ipapath = request.getServletContext().getRealPath("/builds/plists/") + packageName + ".ipa";
+        try {
+            Runtime.getRuntime().exec("rm -rf " + plistpath);
+            Runtime.getRuntime().exec("rm -rf " + ipapath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "redirect:downloads.do";
+    }
+
     @RequestMapping("uploadCer")
     public String cerUpload(@RequestParam("file") MultipartFile file, String projectName) throws Exception {
         if (!checkNameExists(projectName)) {
