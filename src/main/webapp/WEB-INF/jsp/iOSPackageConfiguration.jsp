@@ -62,17 +62,26 @@
         })
 
         $("#packageBtn").bind("click", function () {
-            $.ajax({
-                type: "POST",
-                data: {projectName: $("#projectName").val()},
-                url: "${pageContext.request.contextPath}/ios/package.do",
-                error: function (err) {
-                    console.log(err)
-                },
-                success: function (data, data1) {
-                    console.log(data)
-                }
-            });
+            if (confirm("是否确定打包")) {
+                $.ajax({
+                    type: "POST",
+                    data: {projectName: $("#projectName").val()},
+                    url: "${pageContext.request.contextPath}/ios/package.do",
+                    error: function (err) {
+                        console.log(err)
+                    },
+                    success: function (data, data1) {
+                        alert(data)
+                    }
+                });
+                alert("正在打包中, 请在下载页面稍等");
+                window.location.href = "${pageContext.request.contextPath}/ios/downloads.do";
+            }
+
+        })
+
+        $("#downloads").bind("click", function () {
+            window.location.href = "${pageContext.request.contextPath}/ios/downloads.do";
         })
 
     });
@@ -169,6 +178,10 @@
 
     <p>
         <button class="btn btn-lg btn-primary btn-block" id="packageBtn" type="submit">打包</button>
+    </p>
+
+    <p>
+        <button class="btn btn-lg btn-primary btn-block" id="downloads" type="submit">下载列表</button>
     </p>
 
 

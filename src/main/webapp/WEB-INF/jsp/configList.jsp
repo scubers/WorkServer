@@ -34,22 +34,19 @@
 
 <script type="application/javascript">
 
-    function autorefresh() {
-        window.history.go(0);
-    }
-
     $(function () {
 
-        $("#downloadCrt").bind('click', function () {
-            window.location.href = "${pageContext.request.contextPath}/builds/my.crt";
+        $("#add").bind('click', function () {
+            window.location.href = "${pageContext.request.contextPath}/ios/config.do";
         })
 
-        $("#configListBtn").bind('click', function () {
-            window.location.href = "${pageContext.request.contextPath}/ios/configList.do";
-        })
-
-        window.setInterval("autorefresh()", 5000);
     });
+
+    function deleteConfig(name) {
+        if (confirm("是否确认删除")) {
+            window.location.href = "${pageContext.request.contextPath}/ios/deleteConfig.do?projectName=" + name;
+        }
+    }
 
 </script>
 
@@ -63,27 +60,33 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
-        <h1>IPA下载</h1>
-        <p>按时间倒序排列, 选择自己需要的包进行下载</p>
-        <p>如没看到自己的包, 请稍等, 自动刷新</p>
+        <h1>Project 配置列表</h1>
+        <p>点击修改或者打包</p>
     </div>
 
-    <%--<a href="${pageContext.request.contextPath}/builds/my.crt">下载证书</a>--%>
     <p>
-        <button type="button" id="downloadCrt" class="btn btn-lg btn-warning">不能下载请先下载证书</button>
-        &nbsp;&nbsp;&nbsp;
-        <button type="button" id="configListBtn" class="btn btn-lg btn-warning">配置列表</button>
+        <button type="button" class="btn btn-lg btn-success" id="add">添加配置</button>
     </p>
 
+    <p>
 
-    <c:forEach var="name" items="${filenames}">
-        <c:if test="${name ne 'empty'}">
-            <p>
-                <a class="btn btn-lg btn-primary" href="itms-services://?action=download-manifest&url=${downloadBaseUrl}/${name}" role="button">
-                        ${fn:substring(name, 0, fn:indexOf(name, "."))}
-                </a>
-            </p>
-        </c:if>
+    </p>
+    <p>
+
+    </p>
+
+    <c:forEach var="name" items="${names}">
+
+        <p>
+            <a class="btn btn-lg btn-primary" href="${pageContext.request.contextPath}/ios/config.do?projectName=${name}" role="button">
+                    ${name}
+            </a>
+
+            <a class="btn btn-lg btn-primary" onclick="deleteConfig(${name})" role="button">
+                    删除配置
+            </a>
+        </p>
+
     </c:forEach>
 
 </div> <!-- /container -->

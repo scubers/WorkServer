@@ -32,6 +32,27 @@ public class IOSPackageController extends BaseController {
     @Autowired
     private HttpServletRequest request;
 
+    @RequestMapping("configList")
+    public String configList() {
+        File file = new File(getProjectOutputpath());
+        List<String> names = new ArrayList();
+        if (file != null) {
+            File[] files = file.listFiles();
+            Arrays.sort(files, new Comparator<File>() {
+                public int compare(File o1, File o2) {
+                    return (int)(o2.lastModified() - o1.lastModified());
+                }
+            });
+            for (File f: files) {
+                if (f.isDirectory())
+                    names.add(f.getName());
+            }
+        }
+
+        request.setAttribute("names", names);
+        return "configList";
+    }
+
     @RequestMapping("config")
     public String config(String projectName) throws Exception {
         File file = new File(getProjectPath(projectName) + IOSPackageController.CONFIG_FILE_NAME);
@@ -59,6 +80,19 @@ public class IOSPackageController extends BaseController {
             }
         }
         return "{success:true}";
+    }
+
+    @RequestMapping("deleteConfig")
+    public String deleteConfig(String projectName) {
+        File file = new File(getProjectPath(projectName));
+        if (file != null && file.isDirectory()) {
+            try {
+                Process process = Runtime.getRuntime().exec("rm -rf " + file.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "redirect:configList.do";
     }
 
     @RequestMapping("uploadCer")
@@ -102,19 +136,23 @@ public class IOSPackageController extends BaseController {
             file.mkdirs();
         }
         if (config != null) {
-            runshell(config);
-            return "";
+            synchronized (this) {
+                runshell(config);
+            }
+            return "{success: true}";
         }
-        return "";
+        return "{success: false}";
     }
 
     private boolean runshell(IOSConfig config) {
         Process process;
-        List<String> processList = new ArrayList<String>();
+//        List<String> processList = new ArrayList<String>();
+        StringBuilder builder = new StringBuilder();
         BufferedReader input = null;
         try {
-            process = Runtime.getRuntime().exec("chmod +x /Users/mac/Desktop/autopackage.sh");
-            String abc = "/Users/mac/Desktop/autopackage.sh " +
+            String shellPath = request.getServletContext().getRealPath("/") + "WEB-INF/classes/iosconfig/autopackage.sh";
+            process = Runtime.getRuntime().exec("chmod +x " + shellPath);
+            String abc = shellPath + " " +
                     " " + config.getSvnpath() + " " + // svn
                     " " + config.getUsername() + " " + // svn
                     " " + config.getPwd() + " " + // svn
@@ -135,11 +173,18 @@ public class IOSPackageController extends BaseController {
             input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = input.readLine()) != null) {
-                processList.add(line);
+                builder.append(line);
+                builder.append("\n");
                 System.out.println(line);
             }
+
+            String logpath = getProjectOutputpath() + config.getProjectName() + "/build.log";
+            ToolsKit.FileUtil.writeFile(logpath, builder.toString(), false);
+
             input.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (input != null) {
@@ -160,9 +205,10 @@ public class IOSPackageController extends BaseController {
         File[] files = file.listFiles();
         Arrays.sort(files, new Comparator<File>() {
             public int compare(File o1, File o2) {
-                return (int)(o2.lastModified() - o1.lastModified());
+            return (int)(o2.lastModified() - o1.lastModified());
             }
         });
+
         List<String> filenames = new ArrayList<String>(files.length);
         for (File f: files) {
             filenames.add(f.getName());
@@ -188,7 +234,7 @@ public class IOSPackageController extends BaseController {
         }
     }
 
-    private String getIOSConfigBasePath() {
+    private String getProjectOutputpath() {
         return loadBaseConfig().getProperty("outputpath");
     }
 
@@ -214,19 +260,19 @@ public class IOSPackageController extends BaseController {
     }
 
     private boolean checkNameExists(String projectName) {
-        File file = new File(getIOSConfigBasePath() + projectName);
+        File file = new File(getProjectOutputpath() + projectName);
         return file.exists();
     }
 
     private void createProjectDir(String projectName) {
-        File file = new File(getIOSConfigBasePath() + projectName);
+        File file = new File(getProjectOutputpath() + projectName);
         if (!file.exists()) {
             file.mkdirs();
         }
     }
 
     private String getProjectPath(String projectName) {
-        return getIOSConfigBasePath() + projectName + "/";
+        return getProjectOutputpath() + projectName + "/";
     }
 
     public static void main(String[] args) throws Exception {

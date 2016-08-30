@@ -1,8 +1,5 @@
 package com.jrwong.modules.iOSPackage.bean;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by J on 16/8/25.
